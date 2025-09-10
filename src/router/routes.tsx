@@ -213,14 +213,6 @@ export const routesConfig = [
     permissions: ["GROUP_STATISTICS_MENU", "STUDENT_STATISTICS_MENU"],
     children: [
       {
-        path: "university-statistics",
-        label: "Universitet",
-        icon: <FaBuilding style={{ fontSize: "22px" }} />,
-        element: <UniversityStatistics />,
-        permissions: ["UNIVERSITY_STATISTICS"],
-        showInSidebar: true,
-      },
-      {
         path: "speciality-statistics",
         label: "Yo'nalishlar",
         icon: <FiSlack style={{ fontSize: "22px" }} />,
@@ -228,30 +220,7 @@ export const routesConfig = [
         permissions: ["SPECIALITY_FORM_STATISTICS_PAGEABLE"],
         showInSidebar: true,
       },
-      {
-        path: "group-statistics",
-        label: "Guruhlar",
-        icon: <FaUserGroup style={{ fontSize: "22px" }} />,
-        element: <GroupStatistics />,
-        permissions: ["GROUP_STATISTICS_MENU"],
-        showInSidebar: true,
-      },
-      {
-        path: "payment-chart",
-        label: "To'lov",
-        icon: <FaUserGroup style={{ fontSize: "22px" }} />,
-        element: <PaymentHistoryChart />,
-        permissions: ["TRANSACTION_STATISTICS_GRAPH_MENU"],
-        showInSidebar: true,
-      },
-      {
-        path: "students-statistics",
-        label: "Studentlar",
-        icon: <FaGraduationCap style={{ fontSize: "22px" }} />,
-        element: <StudentStatistics />,
-        permissions: ["STUDENT_STATISTICS_MENU"],
-        showInSidebar: true,
-      },
+     
     ],
   },
 

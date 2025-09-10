@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { ParamsType } from "@types";
-import { getSpecialityStatistics } from "../service";
+import { getLessonStatistics} from "../service";
 
-export function useGetSpecialityStatistics(params: ParamsType) {
+export function useGetLessonStatistics(params: ParamsType) {
     return useQuery({
-        queryKey: ["speciality-statistics", params],
-        queryFn: () => getSpecialityStatistics(params)
+        queryKey: ["lesson-statistics", params],
+        queryFn: () => getLessonStatistics(params)
     })
 }

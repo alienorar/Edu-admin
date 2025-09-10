@@ -30,6 +30,10 @@ export interface ParamsType {
   count?:number|string
   specialityId?:string,
   studentStatus?:string,
+   startDate?:string,
+   endDate?:string,
+   teacherId?:string|number,
+   departmentId?:string|number
 }
 
 export interface PagingType {
