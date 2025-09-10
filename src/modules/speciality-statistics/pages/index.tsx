@@ -4,7 +4,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Card, Statistic, Row, Col, Progress, Empty, Button, Input, DatePicker, Table } from "antd";
 import { BookOutlined, CheckCircleOutlined, CloseCircleOutlined, ClockCircleOutlined, PercentageOutlined, CalendarOutlined, SearchOutlined } from "@ant-design/icons";
-import { useSearchParams, } from "react-router-dom";
+import { useSearchParams,} from "react-router-dom";
 // import { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 import type { RangePickerProps } from "antd/es/date-picker";
@@ -36,6 +36,19 @@ interface LessonStatisticsData {
     finishedLessonLoadPercentageForCurrentYear: number;
   };
 }
+
+// Utility function to format seconds into minutes and seconds
+const formatSeconds = (seconds: number): string => {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = Math.round(seconds % 60);
+  if (minutes === 0) {
+    return `${remainingSeconds} soniya`;
+  }
+  if (remainingSeconds === 0) {
+    return `${minutes} minut`;
+  }
+  return `${minutes} minut, ${remainingSeconds} soniya`;
+};
 
 const filterEmpty = (obj: Record<string, string | undefined>): Record<string, string> =>
   Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== "" && v !== undefined)) as Record<string, string>;
@@ -120,16 +133,16 @@ const LessonStatistics: React.FC = () => {
         render: (count: number) => <span className="text-blue-600 font-medium">{count}</span>,
       },
       {
-        title: <span className="font-semibold text-gray-700">Jami Kechikish (soniya)</span>,
+        title: <span className="font-semibold text-gray-700">Jami Kechikish</span>,
         dataIndex: "lateInSeconds",
         key: "lateInSeconds",
-        render: (seconds: number) => <span className="text-orange-600 font-medium">{seconds.toLocaleString()}</span>,
+        render: (seconds: number) => <span className="text-orange-600 font-medium">{formatSeconds(seconds)}</span>,
       },
       {
-        title: <span className="font-semibold text-gray-700">O'rtacha Kechikish (soniya)</span>,
+        title: <span className="font-semibold text-gray-700">O'rtacha Kechikish</span>,
         dataIndex: "averageLateTime",
         key: "averageLateTime",
-        render: (time: number) => <span className="text-green-600 font-medium">{time.toFixed(2)}</span>,
+        render: (time: number) => <span className="text-green-600 font-medium">{formatSeconds(time)}</span>,
       },
     ],
     []

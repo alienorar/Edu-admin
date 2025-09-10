@@ -1,6 +1,4 @@
 import {
-  FaBuilding,
-  FaGraduationCap,
   FaHandHoldingUsd,
   FaHandshake,
   FaHourglassEnd,
@@ -14,7 +12,7 @@ import {
   FaUsers,
   FaUserShield,
 } from "react-icons/fa"
-import { FaUserGear, FaUsersViewfinder, FaUser, FaUserGroup } from "react-icons/fa6"
+import { FaUserGear, FaUsersViewfinder, FaUser } from "react-icons/fa6"
 import {
   AdminPage,
   Students,
@@ -23,18 +21,14 @@ import {
   PaymentHistory,
   TransactionHistory,
   PaymentDetails,
-  StudentStatistics,
   PmGroupController,
   OnePaymentGroup,
-  GroupStatistics,
   GroupList,
   GroupStudents,
   Role,
   Debt,
   Discount,
-  UniversityStatistics,
   SpecialityStatistics,
-  PaymentHistoryChart,
   Xazna,
   Abiturient,
   Log,
