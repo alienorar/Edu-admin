@@ -25,7 +25,7 @@ export function useSignInMutation() {
             setLastname(lastName)
             setPhone(phoneNumber)
             setRole(role)
-            navigate("/super-admin-panel/students");
+            navigate("/super-admin-panel/speciality-statistics");
         },
         onError: (error: any) => {
             openNotification('error', "Invalid username or password", error.data?.message,)

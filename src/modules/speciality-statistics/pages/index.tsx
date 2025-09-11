@@ -2,15 +2,15 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import { Card, Statistic, Row, Col, Progress, Empty, Button, Input, DatePicker, Table } from "antd";
+import { Card, Statistic, Row, Col, Progress, Empty, Button, Input, DatePicker, Table, Select } from "antd";
 import { BookOutlined, CheckCircleOutlined, CloseCircleOutlined, ClockCircleOutlined, PercentageOutlined, CalendarOutlined, SearchOutlined } from "@ant-design/icons";
-import { useSearchParams,} from "react-router-dom";
+import { useSearchParams, } from "react-router-dom";
 // import { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 import type { RangePickerProps } from "antd/es/date-picker";
 
 // Hypothetical hook for fetching lesson statistics
-import { useGetLessonStatistics } from "../hooks/queries";
+import { useGetDepartmentList, useGetLessonStatistics } from "../hooks/queries";
 
 const { RangePicker } = DatePicker;
 
@@ -36,6 +36,18 @@ interface LessonStatisticsData {
     finishedLessonLoadPercentageForCurrentYear: number;
   };
 }
+interface Department {
+  id: number;
+  hemisId: number;
+  name: string;
+  code: string;
+  structureTypeCode: string;
+  structureTypeName: string;
+  localityTypeCode: string;
+  localityTypeName: string;
+  parent: number;
+  active: boolean;
+}
 
 // Utility function to format seconds into minutes and seconds
 const formatSeconds = (seconds: number): string => {
@@ -55,13 +67,12 @@ const filterEmpty = (obj: Record<string, string | undefined>): Record<string, st
 
 const LessonStatistics: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  // const navigate = useNavigate();
-
-  // Extract query parameters
+  const [departmentList, setDepartmentList] = useState([]);
   const startDate = searchParams.get("startDate") ?? "";
   const endDate = searchParams.get("endDate") ?? "";
   const teacherId = searchParams.get("teacherId") ?? "";
   const departmentId = searchParams.get("departmentId") ?? "";
+
 
   // Fetch data with filters
   const { data: statisticsData, isFetching } = useGetLessonStatistics({
@@ -70,6 +81,24 @@ const LessonStatistics: React.FC = () => {
     teacherId: teacherId ? Number(teacherId) : undefined,
     departmentId: departmentId ? Number(departmentId) : undefined,
   });
+
+  const { data: departments } = useGetDepartmentList();
+
+  console.log(departments?.data)
+
+  useEffect(() => {
+    if (departments?.data) {
+      const transformedList = departments?.data.map((dept: Department) => ({
+        label: dept.name,
+        value: dept.id,
+      }));
+      setDepartmentList(transformedList);
+    } else {
+      setDepartmentList([]);
+    }
+  }, [departments]);
+
+
 
   // State for data
   const [stats, setStats] = useState<LessonStatisticsData["data"]>({
@@ -180,12 +209,13 @@ const LessonStatistics: React.FC = () => {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateParams({ teacherId: e.target.value })}
             className="h-11 rounded-xl border-gray-200 focus:border-blue-400 transition-all duration-200"
           />
-          <Input
-            placeholder="Bo'lim ID"
-            prefix={<SearchOutlined className="text-gray-400" />}
-            value={departmentId}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateParams({ departmentId: e.target.value })}
-            className="h-11 rounded-xl border-gray-200 focus:border-blue-400 transition-all duration-200"
+          <Select
+            allowClear
+            placeholder="Kafedra tanlash"
+            options={departmentList}
+            value={departmentId ? Number(departmentId) : undefined}
+            onChange={(value) => updateParams({ departmentId: value?.toString() || undefined })}
+            className="h-11"
           />
           <Button
             type="primary"
