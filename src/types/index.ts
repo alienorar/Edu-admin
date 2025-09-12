@@ -35,6 +35,28 @@ export interface ParamsType {
    teacherId?:string|number,
    departmentId?:string|number
 }
+export interface ChildRoute {
+  path: string
+  label: string
+  icon: React.ReactElement
+  element: React.ReactElement
+  permissions: string[]
+  showInSidebar: boolean
+}
+
+export interface ParentRoute {
+  label: string
+  icon: React.ReactElement
+  showInSidebar: boolean
+  permissions: string[]
+  children: ChildRoute[]
+  path?: string
+  element?: React.ReactElement
+}
+
+export type RouteConfig = ParentRoute | ChildRoute
+
+
 
 export interface PagingType {
   currentPage: number;

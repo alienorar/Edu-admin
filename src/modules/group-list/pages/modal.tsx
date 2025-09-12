@@ -3,8 +3,6 @@
 import { Modal, Form, Input, Button, Switch } from "antd"
 import { useEffect } from "react"
 import { EditOutlined } from "@ant-design/icons"
-// import { useUpdateProperty } from "../hooks/mutations"
-// import type { Property } from "@types"
 import { useUpdateProperty } from "../hooks/mutations"
 import { Property } from "../service"
 
@@ -21,6 +19,7 @@ const PropertyModal = ({ open, handleClose, update }: PropertyModalType) => {
   useEffect(() => {
     if (update?.id) {
       form.setFieldsValue({
+        key: update.key,
         value: update.value,
         active: update.active,
       })
@@ -29,11 +28,11 @@ const PropertyModal = ({ open, handleClose, update }: PropertyModalType) => {
     }
   }, [update, form])
 
-  const onFinish = async (values: Property) => {
-    const payload: Property = {
-      id: update?.id,
-      value: values.value,
-      active: values.active,
+  const onFinish = async (values: Partial<Property>) => {
+    const payload: Pick<Property, "id" | "active" | "value"> = {
+      id: update?.id as number, // Ensure id is included
+      value: values.value as string,
+      active: values.active as boolean,
     }
 
     updateMutate(payload, {
@@ -76,6 +75,17 @@ const PropertyModal = ({ open, handleClose, update }: PropertyModalType) => {
 
       <div className="p-6 bg-gradient-to-r from-slate-300 to-slate-500">
         <Form form={form} name="property_form" layout="vertical" onFinish={onFinish} className="space-y-4">
+          <Form.Item
+            label={<span className="font-semibold text-gray-700">Key</span>}
+            name="key"
+          >
+            <Input
+              placeholder="Property key"
+              className="h-12 rounded-xl border-gray-400"
+              disabled // Read-only field
+            />
+          </Form.Item>
+
           <Form.Item
             label={<span className="font-semibold text-gray-700">Value</span>}
             name="value"

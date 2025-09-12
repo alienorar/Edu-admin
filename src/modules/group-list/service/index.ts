@@ -2,6 +2,7 @@ import axiosInstance from "@api";
 import { ParamsType } from "@types";
 
 export  interface Property {
+    key?: string;
   id: number|undefined;
   active: boolean;
   value: string;

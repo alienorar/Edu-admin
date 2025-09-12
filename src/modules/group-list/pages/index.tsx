@@ -63,6 +63,13 @@ const Index = () => {
       ),
     },
     {
+      title: <span className="font-semibold text-gray-700">Key</span>,
+      dataIndex: "key",
+      render: (text: number) => (
+        <span className="font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-lg">#{text}</span>
+      ),
+    },
+    {
       title: <span className="font-semibold text-gray-700">Value</span>,
       dataIndex: "value",
       render: (text: string) => <span className="text-gray-800 font-medium">{text}</span>,

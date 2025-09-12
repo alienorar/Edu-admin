@@ -64,9 +64,9 @@ const Index = () => {
   }
 
   const renderRoutes = () =>
-    routesConfig.flatMap((route) => {
+    routesConfig.flatMap((route:any) => {
       if (route.children) {
-        return route.children.map((child) => (
+        return route.children.map((child:any) => (
           <Route
             key={child.path}
             path={child.path}

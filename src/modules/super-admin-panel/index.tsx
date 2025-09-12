@@ -1,3 +1,4 @@
+// src/modules/AdminPanel.tsx
 "use client"
 
 import { useState } from "react"
@@ -14,13 +15,14 @@ import { NavLink, useLocation, Outlet } from "react-router-dom"
 import { getPhone, getRole, getUserPermissions, logout } from "../../utils/token-service"
 import MainLogo from "../../assets/otu-logo.png"
 import { routesConfig } from "../../router/routes"
+// import type { RouteConfig } from "@types"
 
 const { Header, Sider, Content } = Layout
 
 const AdminPanel = () => {
   const [collapsed, setCollapsed] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
-  const [openKeys, setOpenKeys] = useState<string[]>([]) // State to manage open submenus
+  const [openKeys, setOpenKeys] = useState<string[]>([])
   const { pathname } = useLocation()
   const permissions = getUserPermissions()
 
@@ -40,7 +42,6 @@ const AdminPanel = () => {
 
   const Firstname = localStorage.getItem("Firstname")
   const Lastname = localStorage.getItem("Lastname")
-
   const role = getRole()
   const phoneNumber = getPhone()
 
@@ -59,7 +60,6 @@ const AdminPanel = () => {
 
   // Handle submenu open/close with single-open behavior
   const onOpenChange = (keys: string[]) => {
-    // Allow only one submenu to be open at a time
     const latestOpenKey = keys[keys.length - 1]
     if (latestOpenKey) {
       setOpenKeys([latestOpenKey])
@@ -81,7 +81,6 @@ const AdminPanel = () => {
             background: "linear-gradient(180deg, #2563eb 0%, #7c3aed 100%)",
             boxShadow: "4px 0 20px rgba(0, 0, 0, 0.1)",
             overflowY: "auto",
-            // maxHeight: "calc(100vh - 64px)",
           }}
         >
           {/* Logo Section */}
@@ -101,8 +100,8 @@ const AdminPanel = () => {
           <Menu
             mode="inline"
             selectedKeys={[pathname]}
-            openKeys={openKeys} // Control open submenus
-            onOpenChange={onOpenChange} // Handle submenu open/close
+            openKeys={openKeys}
+            onOpenChange={onOpenChange}
             className="bg-transparent border-0 px-4"
             style={{
               borderRight: 0,
@@ -112,8 +111,8 @@ const AdminPanel = () => {
             }}
           >
             {accessibleRoutes.map((item) => {
-              if (item.children && item.children.length > 0) {
-                // Filter child routes based on showInSidebar and permissions
+              // Handle parent routes with children
+              if ("children" in item && item.children && item.children.length > 0) {
                 const accessibleChildren = item.children.filter(
                   (child) => child.showInSidebar !== false && hasPermission(child.permissions),
                 )
@@ -161,27 +160,32 @@ const AdminPanel = () => {
                 )
               }
 
-              const fullPath = `/super-admin-panel/${item.path}`
-              const isActive = pathname === fullPath
-              return (
-                <Menu.Item
-                  key={fullPath}
-                  icon={<span className="text-white/80">{item.icon}</span>}
-                  className="mb-2 rounded-xl"
-                  style={{
-                    backgroundColor: isActive ? "rgba(255, 255, 255, 0.2)" : "rgba(255, 255, 255, 0.05)",
-                    borderRadius: "12px",
-                    margin: "4px 0",
-                    height: "48px",
-                    lineHeight: "48px",
-                    borderLeft: isActive ? "4px solid rgba(255, 255, 255, 0.8)" : "none",
-                  }}
-                >
-                  <NavLink to={fullPath} className="text-white/90 hover:text-white font-medium">
-                    {item.label}
-                  </NavLink>
-                </Menu.Item>
-              )
+              // Handle standalone routes with path
+              if ("path" in item) {
+                const fullPath = `/super-admin-panel/${item.path}`
+                const isActive = pathname === fullPath
+                return (
+                  <Menu.Item
+                    key={fullPath}
+                    icon={<span className="text-white/80">{item.icon}</span>}
+                    className="mb-2 rounded-xl"
+                    style={{
+                      backgroundColor: isActive ? "rgba(255, 255, 255, 0.2)" : "rgba(255, 255, 255, 0.05)",
+                      borderRadius: "12px",
+                      margin: "4px 0",
+                      height: "48px",
+                      lineHeight: "48px",
+                      borderLeft: isActive ? "4px solid rgba(255, 255, 255, 0.8)" : "none",
+                    }}
+                  >
+                    <NavLink to={fullPath} className="text-white/90 hover:text-white font-medium">
+                      {item.label}
+                    </NavLink>
+                  </Menu.Item>
+                )
+              }
+
+              return null
             })}
           </Menu>
 
