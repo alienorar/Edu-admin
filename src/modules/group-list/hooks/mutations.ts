@@ -1,22 +1,21 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateGroupList } from "../service";
+import { Property, updateProperty, } from "../service";
 import { openNotification } from "@utils";
-import { GroupListUpdate } from "@types";
 
 
 // ============ UPDATE GROUP LIST ===========
-export function useUpdateGroupList () {
+export function useUpdateProperty () {
     const queryClient = useQueryClient()
     return useMutation({
-        mutationFn:(data:GroupListUpdate) => updateGroupList(data),
+        mutationFn:(data:Property) => updateProperty(data),
          onSuccess: (data) => {
-                    openNotification("success", "Success", data?.data?.message)
+                    openNotification("success", "Success", data?.message)
                 },
                 onSettled: (_, error) => {
                     if (error) {
                         openNotification("error", "Error", error?.message)
                     } else {
-                        queryClient.invalidateQueries({ queryKey: ["group-list"] })
+                        queryClient.invalidateQueries({ queryKey: ["property"] })
                     }
                 }
     })

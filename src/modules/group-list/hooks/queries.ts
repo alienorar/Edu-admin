@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { getGroupList, getPmtGroupList } from "../service";
+import { getPmtGroupList, getProperty } from "../service";
 import { ParamsType } from "@types";
 
 // ============ GET Group list ===========
-export function useGetStudentById(params:ParamsType) {
+export function useGetProperty(params:ParamsType) {
     return useQuery({
-        queryKey: ["group-list",params],
-        queryFn: () => getGroupList(params)
+        queryKey: ["property",params],
+        queryFn: () => getProperty(params)
     })
 }
 

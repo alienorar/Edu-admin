@@ -5,9 +5,9 @@ import {
 import { FaUserGear, FaUser } from "react-icons/fa6"
 import {
   AdminPage,
-  GroupStudents,
   Role,
-  SpecialityStatistics,
+LessonStatistics,
+GroupList,
 } from "@modules"
 import { FiSlack } from "react-icons/fi"
 
@@ -31,6 +31,14 @@ export const routesConfig = [
         icon: <FaUserShield style={{ fontSize: "22px" }} />,
         label: "Admin User",
         element: <AdminPage />,
+        permissions: ["ADMIN_USER_MENU"],
+        showInSidebar: true,
+      },
+      {
+        path: "property",
+        icon: <FaUserShield style={{ fontSize: "22px" }} />,
+        label: "Property",
+        element: <GroupList/>,
         permissions: ["ADMIN_USER_MENU"],
         showInSidebar: true,
       },
@@ -183,20 +191,13 @@ export const routesConfig = [
     children: [
       {
         path: "speciality-statistics",
-        label: "Yo'nalishlar",
+        label: "Darslar",
         icon: <FiSlack style={{ fontSize: "22px" }} />,
-        element: <SpecialityStatistics />,
+        element: <LessonStatistics/>,
         permissions: ["SPECIALITY_FORM_STATISTICS_PAGEABLE"],
         showInSidebar: true,
       },
      
     ],
-  },
-
-  {
-    path: "group-statistics/:id",
-    element: <GroupStudents />,
-    permissions: ["GROUP_STATISTICS_MENU"],
-    showInSidebar: false,
   },
 ]
