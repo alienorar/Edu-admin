@@ -1,151 +1,119 @@
 "use client"
 
-import type React from "react"
+import { Modal, Form, Input, Button, Switch } from "antd"
 import { useEffect } from "react"
-import { Modal, Form, Input, Button, Select, InputNumber } from "antd"
-import { TeamOutlined, IdcardOutlined, DollarOutlined, EyeOutlined, NumberOutlined } from "@ant-design/icons"
-import { useUpdateGroupList } from "../hooks/mutations"
-import type { GroupListUpdate, PaymentGroup } from "@types"
-import { useGetPmtGroupList } from "../hooks/queries"
+import { EditOutlined } from "@ant-design/icons"
+// import { useUpdateProperty } from "../hooks/mutations"
+// import type { Property } from "@types"
+import { useUpdateProperty } from "../hooks/mutations"
+import { Property } from "../service"
 
-interface GroupModalProps {
+interface PropertyModalType {
   open: boolean
-  handleClose: () => void
-  update: GroupListUpdate | null
+  handleClose?: () => void
+  update?: Property | null
 }
 
-const GroupModal: React.FC<GroupModalProps> = ({ open, handleClose, update }) => {
+const PropertyModal = ({ open, handleClose, update }: PropertyModalType) => {
   const [form] = Form.useForm()
-  const { mutate: updateMutate, isPending: isUpdating } = useUpdateGroupList()
-  const { data: paymentGroupsData, isLoading: isLoadingPaymentGroups } = useGetPmtGroupList()
-
-  const paymentGroupOptions =
-    paymentGroupsData?.data?.content?.map((group: PaymentGroup) => ({
-      value: group.id,
-      label: `${group.name}`,
-    })) || []
+  const { mutate: updateMutate, isPending: isUpdating } = useUpdateProperty()
 
   useEffect(() => {
-    if (update) {
+    if (update?.id) {
       form.setFieldsValue({
-        groupId: update.id,
-        paymentGroupId: update.paymentGroupId || undefined,
-        visible: update.visible,
-        debtLevel: update.debtLevel,
+        value: update.value,
+        active: update.active,
       })
     } else {
       form.resetFields()
     }
   }, [update, form])
 
-  const onFinish = async (values: GroupListUpdate) => {
-    const payload: GroupListUpdate = {
-      groupId: values.groupId,
-      paymentGroupId: values.paymentGroupId,
-      visible: values.visible,
-      debtLevel: values.debtLevel,
+  const onFinish = async (values: Property) => {
+    const payload: Property = {
+      id: update?.id,
+      value: values.value,
+      active: values.active,
     }
-    updateMutate(payload, { onSuccess: handleClose })
+
+    updateMutate(payload, {
+      onSuccess: () => {
+        if (handleClose) {
+          handleClose()
+        }
+        form.resetFields()
+      },
+    })
   }
 
   return (
     <Modal
-      title={
-        <div className="flex items-center gap-3 pb-4 border-b border-gray-100">
-          <div className="w-12 h-12 bg-gradient-to-br from-teal-400 via-sky-400 to-blue-800 rounded-xl flex items-center justify-center shadow-lg">
-            <TeamOutlined className="text-white text-xl" />
-          </div>
-          <div>
-            <h3 className="text-xl font-bold text-gray-800">Guruhni tahrirlash</h3>
-            <p className="text-sm text-gray-500 mt-1">Guruh ma'lumotlarini yangilang</p>
-          </div>
-        </div>
-      }
       open={open}
       onCancel={handleClose}
       footer={null}
-      width={600}
-      className="rounded-2xl"
+      width={650}
+      className="rounded-2xl overflow-hidden"
       styles={{
         content: {
           borderRadius: "16px",
-          padding: "24px",
-          background: "white",
-          boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+          padding: "0",
+          overflow: "hidden",
         },
       }}
+      title={null}
     >
-      <Form form={form} name="group_form" layout="vertical" onFinish={onFinish} className="mt-6">
-        <Form.Item
-          label={<span className="font-semibold text-gray-700">Guruh ID</span>}
-          name="groupId"
-          rules={[{ required: true, message: "Guruh ID kiriting!" }]}
-        >
-          <Input
-            disabled
-            prefix={<IdcardOutlined className="text-gray-400" />}
-            className="h-12 rounded-xl bg-gray-50 text-gray-600 border-gray-400 border-[2px]"
-          />
-        </Form.Item>
+      <div className="bg-gradient-to-r from-blue-600 to-violet-600 p-6 text-white">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+            <EditOutlined className="text-white text-xl" />
+          </div>
+          <div>
+            <h3 className="text-xl font-bold mb-1">Property Update</h3>
+            <p className="text-white/80">Update the property details</p>
+          </div>
+        </div>
+      </div>
 
-        <Form.Item
-          label={<span className="font-semibold text-gray-700">To'lov guruhi ID</span>}
-          name="paymentGroupId"
-          rules={[{ required: false }]}
-        >
-          <Select
-            placeholder="To'lov guruhini tanlang"
-            options={paymentGroupOptions}
-            loading={isLoadingPaymentGroups}
-            allowClear
-            className="h-12 border-gray-400 border-[2px] rounded-xl"
-            suffixIcon={<DollarOutlined className="text-teal-500" />}
-          />
-        </Form.Item>
-
-        <Form.Item
-          label={<span className="font-semibold text-gray-700">Ko'rinish</span>}
-          name="visible"
-          rules={[{ required: true, message: "Ko'rinishni tanlang!" }]}
-        >
-          <Select
-            placeholder="Ko'rinishni tanlang"
-            options={[
-              { value: true, label: "Ko'rinadigan" },
-              { value: false, label: "Ko'rinmaydigan" },
-            ]}
-            allowClear
-            className="h-12 border-gray-400 border-[2px] rounded-xl"
-            suffixIcon={<EyeOutlined className="text-teal-500" />}
-          />
-        </Form.Item>
-
-        <Form.Item
-          label={<span className="font-semibold text-gray-700">Qarz darajasi</span>}
-          name="debtLevel"
-          rules={[{ required: true, message: "Qarz darajasini kiriting!" }]}
-        >
-          <InputNumber
-            min={0}
-            placeholder="Qarz darajasini kiriting"
-            className="w-full h-12 rounded-xl bg-gray-50 text-gray-600 border-gray-400 border-[2px]"
-            prefix={<NumberOutlined className="text-gray-400" />}
-          />
-        </Form.Item>
-
-        <Form.Item className="mb-0 mt-8">
-          <Button
-            block
-            htmlType="submit"
-            loading={isUpdating}
-            className="h-14 bg-gradient-to-r from-teal-500 to-blue-600 hover:from-teal-600 hover:to-blue-700 border-0 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-200"
+      <div className="p-6 bg-gradient-to-r from-slate-300 to-slate-500">
+        <Form form={form} name="property_form" layout="vertical" onFinish={onFinish} className="space-y-4">
+          <Form.Item
+            label={<span className="font-semibold text-gray-700">Value</span>}
+            name="value"
+            rules={[{ required: true, message: "Please enter the value!" }]}
           >
-            Guruhni yangilash
-          </Button>
-        </Form.Item>
-      </Form>
+            <Input
+              prefix={<EditOutlined className="text-blue-500" />}
+              placeholder="Enter property value"
+              className="h-12 rounded-xl border-gray-200 focus:border-blue-500 transition-all duration-200"
+            />
+          </Form.Item>
+
+          <Form.Item
+            label={<span className="font-semibold text-gray-700">Active</span>}
+            name="active"
+            valuePropName="checked"
+          >
+            <Switch
+              checkedChildren="Active"
+              unCheckedChildren="Inactive"
+              className="bg-gray-300"
+            />
+          </Form.Item>
+
+          <Form.Item className="mb-0 mt-8">
+            <Button
+              block
+              htmlType="submit"
+              loading={isUpdating}
+              className="h-14 text-white bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 border-0 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-200"
+            >
+              Update Property
+            </Button>
+          </Form.Item>
+        </Form>
+      </div>
     </Modal>
   )
 }
 
-export default GroupModal
+export default PropertyModal

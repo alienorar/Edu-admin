@@ -1,14 +1,20 @@
 import axiosInstance from "@api";
-import { GroupListUpdate, ParamsType } from "@types";
+import { ParamsType } from "@types";
+
+export  interface Property {
+  id: number|undefined;
+  active: boolean;
+  value: string;
+}
 
 // ============= GET GROUP LIST ============
-export async function getGroupList(params:ParamsType) {
-    return (await axiosInstance.get(`api/v1/groups/pageable`,{params})).data
+export async function getProperty(params:ParamsType) {
+    return (await axiosInstance.get(`/api/v1/admin/property`,{params})).data
 }
 
 // ============= UPDATE GROUP LIST ============
-export async function updateGroupList(data:GroupListUpdate) {
-   const response =  await axiosInstance.put(`api/v1/groups/update`,data)
+export async function updateProperty(data:Property) {
+   const response =  await axiosInstance.patch(`/api/v1/admin/property`,data)
    return response?.data
     
 }

@@ -251,7 +251,7 @@ const LessonStatistics: React.FC = () => {
             <Col xs={24} sm={12} lg={6}>
               <Card className="bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
                 <Statistic
-                  title={<span className="text-gray-600 font-medium">Joriy Yil Darslari</span>}
+                  title={<span className="text-gray-600 font-medium">Yillik umumiy darslar soni</span>}
                   value={stats.lessonCountForCurrentYear}
                   prefix={<CalendarOutlined className="text-blue-500" />}
                   valueStyle={{ color: '#1890ff', fontSize: '2rem', fontWeight: 'bold' }}
@@ -262,7 +262,7 @@ const LessonStatistics: React.FC = () => {
             <Col xs={24} sm={12} lg={6}>
               <Card className="bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
                 <Statistic
-                  title={<span className="text-gray-600 font-medium">Davr Darslari</span>}
+                  title={<span className="text-gray-600 font-medium">Belgilangan davr uchun darslar soni</span>}
                   value={stats.lessonCountForInterval}
                   prefix={<ClockCircleOutlined className="text-orange-500" />}
                   valueStyle={{ color: '#fa8c16', fontSize: '2rem', fontWeight: 'bold' }}
@@ -300,7 +300,7 @@ const LessonStatistics: React.FC = () => {
                 title={
                   <div className="flex items-center gap-2">
                     <PercentageOutlined className="text-blue-500" />
-                    <span className="font-semibold text-gray-800">Davr Uchun Bajarilish Foizi</span>
+                    <span className="font-semibold text-gray-800">Belgilangan davr uchun bajarilish foizi</span>
                   </div>
                 }
                 className="bg-white rounded-2xl shadow-lg border border-gray-100"
@@ -329,7 +329,7 @@ const LessonStatistics: React.FC = () => {
                 title={
                   <div className="flex items-center gap-2">
                     <CalendarOutlined className="text-green-500" />
-                    <span className="font-semibold text-gray-800">Joriy Yil Bajarilish Foizi</span>
+                    <span className="font-semibold text-gray-800">Yillik o'quv yuklamasining bajarilish foizi</span>
                   </div>
                 }
                 className="bg-white rounded-2xl shadow-lg border border-gray-100"
@@ -399,7 +399,7 @@ const LessonStatistics: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-3">
                 <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
-                  <span className="text-gray-700 font-medium">Jami darslar (joriy yil):</span>
+                  <span className="text-gray-700 font-medium">Yillik umumiy darslar soni</span>
                   <span className="font-bold text-blue-600">{stats.lessonCountForCurrentYear}</span>
                 </div>
                 <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
