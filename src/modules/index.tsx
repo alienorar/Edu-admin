@@ -27,6 +27,9 @@ const Abiturient = loadable(() => import('./abiturient/pages'), {
   fallback: <Loading />
 });
 
+const Synchronization = loadable(() => import('./synchronize/pages'), {
+  fallback: <Loading />
+});
 
 const NotFound = loadable(() => import('./not-found'), {
   fallback: <Loading />
@@ -43,6 +46,7 @@ export {
   GroupList,
   LessonStatistics,
   Xazna,
+  Synchronization,
   Abiturient,
   NotFound,
   AccessDenied
