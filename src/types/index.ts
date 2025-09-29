@@ -21,6 +21,7 @@ export interface ParamsType {
   educationForm?: string | undefined;
   educationType?: string | undefined;
   educationLang?: string | undefined;
+  educationYear?:string|number;
   active?: string | undefined;
   showDebt?: string;
   type?: string
