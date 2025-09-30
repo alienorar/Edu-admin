@@ -1,15 +1,11 @@
 
-"use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import { Card, Statistic, Row, Col, Progress, Empty, Button, Input, DatePicker, Table, Select } from "antd";
+import { Card, Statistic, Row, Col, Progress, Empty, Button, Input, DatePicker, Table, Select, Spin, Alert } from "antd";
 import { BookOutlined, CheckCircleOutlined, CloseCircleOutlined, ClockCircleOutlined, PercentageOutlined, CalendarOutlined, SearchOutlined } from "@ant-design/icons";
-import { useSearchParams, } from "react-router-dom";
-// import { Dayjs } from "dayjs";
+import { useSearchParams } from "react-router-dom";
 import dayjs from "dayjs";
 import type { RangePickerProps } from "antd/es/date-picker";
-
-// Hypothetical hook for fetching lesson statistics
 import { useGetDepartmentList, useGetLessonStatistics } from "../hooks/queries";
 
 const { RangePicker } = DatePicker;
@@ -36,6 +32,7 @@ interface LessonStatisticsData {
     finishedLessonLoadPercentageForCurrentYear: number;
   };
 }
+
 interface Department {
   id: number;
   hemisId: number;
@@ -65,30 +62,43 @@ const formatSeconds = (seconds: number): string => {
 const filterEmpty = (obj: Record<string, string | undefined>): Record<string, string> =>
   Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== "" && v !== undefined)) as Record<string, string>;
 
+// Error Boundary Component
+class ErrorBoundary extends React.Component<{ children: React.ReactNode; fallback: React.ReactNode }, { hasError: boolean }> {
+  state = { hasError: false };
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback;
+    }
+    return this.props.children;
+  }
+}
+
 const LessonStatistics: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [departmentList, setDepartmentList] = useState([]);
+  const [departmentList, setDepartmentList] = useState<{ label: string; value: number }[]>([]);
   const startDate = searchParams.get("startDate") ?? "";
   const endDate = searchParams.get("endDate") ?? "";
   const teacherId = searchParams.get("teacherId") ?? "";
   const departmentId = searchParams.get("departmentId") ?? "";
 
-
   // Fetch data with filters
-  const { data: statisticsData, isFetching } = useGetLessonStatistics({
+  const { data: statisticsData, isFetching: isStatsFetching, isError: isStatsError, error: statsError } = useGetLessonStatistics({
     startDate: startDate || undefined,
     endDate: endDate || undefined,
     teacherId: teacherId ? Number(teacherId) : undefined,
     departmentId: departmentId ? Number(departmentId) : undefined,
   });
 
-  const { data: departments } = useGetDepartmentList();
-
-  console.log(departments?.data)
+  const { data: departments, isFetching: isDepartmentsFetching, isError: isDepartmentsError, error: departmentsError } = useGetDepartmentList();
 
   useEffect(() => {
-    if (departments?.data) {
-      const transformedList = departments?.data.map((dept: Department) => ({
+    if (departments?.data && Array.isArray(departments.data)) {
+      const transformedList = departments.data.map((dept: Department) => ({
         label: dept.name,
         value: dept.id,
       }));
@@ -97,8 +107,6 @@ const LessonStatistics: React.FC = () => {
       setDepartmentList([]);
     }
   }, [departments]);
-
-
 
   // State for data
   const [stats, setStats] = useState<LessonStatisticsData["data"]>({
@@ -126,8 +134,8 @@ const LessonStatistics: React.FC = () => {
     setSearchParams(filterEmpty(merged));
   };
 
-  // Handle date range change with correct type
-  const handleDateChange: RangePickerProps['onChange'] = (dates, dateStrings) => {
+  // Handle date range change
+  const handleDateChange: RangePickerProps["onChange"] = (dates, dateStrings) => {
     if (dates && dateStrings[0] && dateStrings[1]) {
       updateParams({
         startDate: dateStrings[0],
@@ -177,251 +185,304 @@ const LessonStatistics: React.FC = () => {
     []
   );
 
+  // Fallback UI for ErrorBoundary
+  const errorFallback = (
+    <div className="flex items-center justify-center min-h-screen">
+      <Card className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
+        <Alert
+          message="Xatolik yuz berdi"
+          description="Ma'lumotlarni yuklashda xatolik yuz berdi. Iltimos, sahifani qayta yuklang yoki keyinroq urinib ko'ring."
+          type="error"
+          showIcon
+        />
+        <Button
+          type="primary"
+          onClick={() => window.location.reload()}
+          className="mt-4 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 border-0 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+        >
+          Sahifani qayta yuklash
+        </Button>
+      </Card>
+    </div>
+  );
+
   return (
-    <div className="space-y-6 p-6">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-100 p-6 rounded-2xl border border-blue-200">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
-            <BookOutlined className="text-white text-xl" />
+    <ErrorBoundary fallback={errorFallback}>
+      <div className="space-y-6 p-6">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-100 p-6 rounded-2xl border border-blue-200">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+              <BookOutlined className="text-white text-xl" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-800">Dars Statistikasi</h1>
+              <p className="text-gray-600 mt-1">Darslar bo'yicha batafsil statistik ma'lumotlar</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-2xl font-bold text-gray-800">Dars Statistikasi</h1>
-            <p className="text-gray-600 mt-1">Darslar bo'yicha batafsil statistik ma'lumotlar</p>
+
+          {/* Filters */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+            <RangePicker
+              className="h-11 rounded-xl border-gray-200 focus:border-blue-400 transition-all duration-200"
+              format="YYYY-MM-DD"
+              value={startDate && endDate ? [dayjs(startDate), dayjs(endDate)] : undefined}
+              onChange={handleDateChange}
+              allowClear
+              suffixIcon={<CalendarOutlined className="text-blue-500" />}
+              placeholder={["Boshlanish sanasi", "Tugash sanasi"]}
+            />
+            <Input
+              placeholder="O'qituvchi ID"
+              prefix={<SearchOutlined className="text-gray-400" />}
+              value={teacherId}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateParams({ teacherId: e.target.value })}
+              className="h-11 rounded-xl border-gray-200 focus:border-blue-400 transition-all duration-200"
+            />
+            <Select
+              allowClear
+              placeholder="Kafedra tanlash"
+              options={departmentList}
+              value={departmentId ? Number(departmentId) : undefined}
+              onChange={(value) => updateParams({ departmentId: value?.toString() || undefined })}
+              className="h-11"
+              loading={isDepartmentsFetching}
+              disabled={isDepartmentsError || !departmentList.length}
+            />
+            <Button
+              type="primary"
+              loading={isStatsFetching}
+              onClick={() => updateParams({ startDate: undefined, endDate: undefined, teacherId: undefined, departmentId: undefined })}
+              className="h-11 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 border-0 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+              icon={<SearchOutlined />}
+            >
+              Tozalash
+            </Button>
           </div>
         </div>
 
-        {/* Filters */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-          <RangePicker
-            className="h-11 rounded-xl border-gray-200 focus:border-blue-400 transition-all duration-200"
-            format="YYYY-MM-DD"
-            value={startDate && endDate ? [dayjs(startDate), dayjs(endDate)] : undefined}
-            onChange={handleDateChange}
-            allowClear
-            suffixIcon={<CalendarOutlined className="text-blue-500" />}
-            placeholder={["Boshlanish sanasi", "Tugash sanasi"]}
-          />
-          <Input
-            placeholder="O'qituvchi ID"
-            prefix={<SearchOutlined className="text-gray-400" />}
-            value={teacherId}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateParams({ teacherId: e.target.value })}
-            className="h-11 rounded-xl border-gray-200 focus:border-blue-400 transition-all duration-200"
-          />
-          <Select
-            allowClear
-            placeholder="Kafedra tanlash"
-            options={departmentList}
-            value={departmentId ? Number(departmentId) : undefined}
-            onChange={(value) => updateParams({ departmentId: value?.toString() || undefined })}
-            className="h-11"
-          />
-          <Button
-            type="primary"
-            loading={isFetching}
-            onClick={() => updateParams({ startDate: undefined, endDate: undefined, teacherId: undefined, departmentId: undefined })}
-            className="h-11 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 border-0 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
-            icon={<SearchOutlined />}
-          >
-            Tozalash
-          </Button>
-        </div>
-      </div>
-
-      {/* No Data State */}
-      {!hasData && !isFetching && (
-        <Card className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
-          <Empty
-            description={
-              <div className="text-center">
-                <h3 className="text-lg font-medium text-gray-600 mb-2">Hozircha statistik ma'lumotlar mavjud emas</h3>
-                <p className="text-gray-500">Darslar boshlanganidan keyin bu yerda statistikalar ko'rsatiladi</p>
-              </div>
-            }
-            image={Empty.PRESENTED_IMAGE_SIMPLE}
-          />
-        </Card>
-      )}
-
-      {/* Main Statistics Cards */}
-      {hasData && (
-        <>
-          <Row gutter={[16, 16]}>
-            <Col xs={24} sm={12} lg={6}>
-              <Card className="bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
-                <Statistic
-                  title={<span className="text-gray-600 font-medium">Yillik umumiy darslar soni</span>}
-                  value={stats.lessonCountForCurrentYear}
-                  prefix={<CalendarOutlined className="text-blue-500" />}
-                  valueStyle={{ color: '#1890ff', fontSize: '2rem', fontWeight: 'bold' }}
-                />
-              </Card>
-            </Col>
-
-            <Col xs={24} sm={12} lg={6}>
-              <Card className="bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
-                <Statistic
-                  title={<span className="text-gray-600 font-medium">Belgilangan davr uchun darslar soni</span>}
-                  value={stats.lessonCountForInterval}
-                  prefix={<ClockCircleOutlined className="text-orange-500" />}
-                  valueStyle={{ color: '#fa8c16', fontSize: '2rem', fontWeight: 'bold' }}
-                />
-              </Card>
-            </Col>
-
-            <Col xs={24} sm={12} lg={6}>
-              <Card className="bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
-                <Statistic
-                  title={<span className="text-gray-600 font-medium">Tugallangan Darslar</span>}
-                  value={stats.finishedLessonCount}
-                  prefix={<CheckCircleOutlined className="text-green-500" />}
-                  valueStyle={{ color: '#52c41a', fontSize: '2rem', fontWeight: 'bold' }}
-                />
-              </Card>
-            </Col>
-
-            <Col xs={24} sm={12} lg={6}>
-              <Card className="bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
-                <Statistic
-                  title={<span className="text-gray-600 font-medium">Bekor Qilingan Darslar</span>}
-                  value={stats.canceledLessonCount}
-                  prefix={<CloseCircleOutlined className="text-red-500" />}
-                  valueStyle={{ color: '#ff4d4f', fontSize: '2rem', fontWeight: 'bold' }}
-                />
-              </Card>
-            </Col>
-          </Row>
-
-          {/* Progress Cards */}
-          <Row gutter={[16, 16]}>
-            <Col xs={24} lg={12}>
-              <Card
-                title={
-                  <div className="flex items-center gap-2">
-                    <PercentageOutlined className="text-blue-500" />
-                    <span className="font-semibold text-gray-800">Belgilangan davr uchun bajarilish foizi</span>
-                  </div>
-                }
-                className="bg-white rounded-2xl shadow-lg border border-gray-100"
-              >
-                <div className="space-y-4">
-                  <Progress
-                    percent={stats.finishedLessonLoadPercentageForInterval}
-                    strokeColor={{
-                      '0%': '#108ee9',
-                      '100%': '#87d068',
-                    }}
-                    trailColor="#f5f5f5"
-                    strokeWidth={12}
-                    showInfo={true}
-                    format={(percent) => `${percent}%`}
-                  />
-                  <div className="text-center">
-                    <span className="text-gray-600">Davr bo'yicha dars bajarilish ko'rsatkichi</span>
-                  </div>
-                </div>
-              </Card>
-            </Col>
-
-            <Col xs={24} lg={12}>
-              <Card
-                title={
-                  <div className="flex items-center gap-2">
-                    <CalendarOutlined className="text-green-500" />
-                    <span className="font-semibold text-gray-800">Yillik o'quv yuklamasining bajarilish foizi</span>
-                  </div>
-                }
-                className="bg-white rounded-2xl shadow-lg border border-gray-100"
-              >
-                <div className="space-y-4">
-                  <Progress
-                    percent={stats.finishedLessonLoadPercentageForCurrentYear}
-                    strokeColor={{
-                      '0%': '#52c41a',
-                      '100%': '#73d13d',
-                    }}
-                    trailColor="#f5f5f5"
-                    strokeWidth={12}
-                    showInfo={true}
-                    format={(percent) => `${percent}%`}
-                  />
-                  <div className="text-center">
-                    <span className="text-gray-600">Joriy yil bo'yicha dars bajarilish ko'rsatkichi</span>
-                  </div>
-                </div>
-              </Card>
-            </Col>
-          </Row>
-
-          {/* Monthly Late List */}
-          <Card
-            title={
-              <div className="flex items-center gap-2">
-                <ClockCircleOutlined className="text-red-500" />
-                <span className="font-semibold text-gray-800">Oylik Kechikish Statistikasi</span>
-              </div>
-            }
-            className="bg-white rounded-2xl shadow-lg border border-gray-100"
-          >
-            {stats.monthlyLateList.length > 0 ? (
-              <Table
-                dataSource={stats.monthlyLateList}
-                columns={columns}
-                pagination={false}
-                rowKey="month"
-                className="rounded-lg"
-                rowClassName="hover:bg-gray-50"
-              />
-            ) : (
-              <Empty
-                description={
-                  <div className="text-center">
-                    <h3 className="text-lg font-medium text-gray-600 mb-2">Kechikish ma'lumotlari mavjud emas</h3>
-                    <p className="text-gray-500">Hozircha kechikish statistikasi topilmadi</p>
-                  </div>
-                }
-                image={Empty.PRESENTED_IMAGE_SIMPLE}
-              />
-            )}
+        {/* Error State for Departments */}
+        {isDepartmentsError && (
+          <Card className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
+            <Alert
+              message="Kafedra ma'lumotlarini yuklashda xatolik"
+              description={departmentsError?.message || "Kafedra ro'yxatini yuklashda xatolik yuz berdi. Iltimos, keyinroq urinib ko'ring."}
+              type="error"
+              showIcon
+            />
           </Card>
+        )}
 
-          {/* Summary Card */}
-          <Card
-            title={
-              <div className="flex items-center gap-2">
-                <BookOutlined className="text-purple-500" />
-                <span className="font-semibold text-gray-800">Umumiy Xulosalar</span>
-              </div>
-            }
-            className="bg-white rounded-2xl shadow-lg border border-gray-100"
-          >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-3">
-                <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
-                  <span className="text-gray-700 font-medium">Yillik umumiy darslar soni</span>
-                  <span className="font-bold text-blue-600">{stats.lessonCountForCurrentYear}</span>
-                </div>
-                <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
-                  <span className="text-gray-700 font-medium">Tugallangan darslar:</span>
-                  <span className="font-bold text-green-600">{stats.finishedLessonCount}</span>
-                </div>
-              </div>
-              <div className="space-y-3">
-                <div className="flex justify-between items-center p-3 bg-orange-50 rounded-lg">
-                  <span className="text-gray-700 font-medium">Davr darslari:</span>
-                  <span className="font-bold text-orange-600">{stats.lessonCountForInterval}</span>
-                </div>
-                <div className="flex justify-between items-center p-3 bg-red-50 rounded-lg">
-                  <span className="text-gray-700 font-medium">Bekor qilingan:</span>
-                  <span className="font-bold text-red-600">{stats.canceledLessonCount}</span>
-                </div>
-              </div>
+        {/* Error State for Statistics */}
+        {isStatsError && (
+          <Card className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
+            <Alert
+              message="Statistika ma'lumotlarini yuklashda xatolik"
+              description={statsError?.message || "Statistik ma'lumotlarni yuklashda xatolik yuz berdi. Iltimos, keyinroq urinib ko'ring."}
+              type="error"
+              showIcon
+            />
+          </Card>
+        )}
+
+        {/* Loading State */}
+        {(isStatsFetching || isDepartmentsFetching) && (
+          <Card className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
+            <div className="flex items-center justify-center">
+              <Spin size="large" />
+              <span className="ml-4 text-gray-600">Ma'lumotlar yuklanmoqda...</span>
             </div>
           </Card>
-        </>
-      )}
-    </div>
+        )}
+
+        {/* No Data State */}
+        {!hasData && !isStatsFetching && !isStatsError && (
+          <Card className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
+            <Empty
+              description={
+                <div className="text-center">
+                  <h3 className="text-lg font-medium text-gray-600 mb-2">Hozircha statistik ma'lumotlar mavjud emas</h3>
+                  <p className="text-gray-500">Darslar boshlanganidan keyin bu yerda statistikalar ko'rsatiladi</p>
+                </div>
+              }
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+            />
+          </Card>
+        )}
+
+        {/* Main Statistics Cards */}
+        {hasData && !isStatsFetching && !isStatsError && (
+          <>
+            <Row gutter={[16, 16]}>
+              <Col xs={24} sm={12} lg={6}>
+                <Card className="bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+                  <Statistic
+                    title={<span className="text-gray-600 font-medium">Yillik umumiy darslar soni</span>}
+                    value={stats.lessonCountForCurrentYear}
+                    prefix={<CalendarOutlined className="text-blue-500" />}
+                    valueStyle={{ color: "#1890ff", fontSize: "2rem", fontWeight: "bold" }}
+                  />
+                </Card>
+              </Col>
+
+              <Col xs={24} sm={12} lg={6}>
+                <Card className="bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+                  <Statistic
+                    title={<span className="text-gray-600 font-medium">Belgilangan davr uchun darslar soni</span>}
+                    value={stats.lessonCountForInterval}
+                    prefix={<ClockCircleOutlined className="text-orange-500" />}
+                    valueStyle={{ color: "#fa8c16", fontSize: "2rem", fontWeight: "bold" }}
+                  />
+                </Card>
+              </Col>
+
+              <Col xs={24} sm={12} lg={6}>
+                <Card className="bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+                  <Statistic
+                    title={<span className="text-gray-600 font-medium">Tugallangan Darslar</span>}
+                    value={stats.finishedLessonCount}
+                    prefix={<CheckCircleOutlined className="text-green-500" />}
+                    valueStyle={{ color: "#52c41a", fontSize: "2rem", fontWeight: "bold" }}
+                  />
+                </Card>
+              </Col>
+
+              <Col xs={24} sm={12} lg={6}>
+                <Card className="bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+                  <Statistic
+                    title={<span className="text-gray-600 font-medium">Bekor Qilingan Darslar</span>}
+                    value={stats.canceledLessonCount}
+                    prefix={<CloseCircleOutlined className="text-red-500" />}
+                    valueStyle={{ color: "#ff4d4f", fontSize: "2rem", fontWeight: "bold" }}
+                  />
+                </Card>
+              </Col>
+            </Row>
+
+            {/* Progress Cards */}
+            <Row gutter={[16, 16]}>
+              <Col xs={24} lg={12}>
+                <Card
+                  title={
+                    <div className="flex items-center gap-2">
+                      <PercentageOutlined className="text-blue-500" />
+                      <span className="font-semibold text-gray-800">Belgilangan davr uchun bajarilish foizi</span>
+                    </div>
+                  }
+                  className="bg-white rounded-2xl shadow-lg border border-gray-100"
+                >
+                  <div className="space-y-4">
+                    <Progress
+                      percent={stats.finishedLessonLoadPercentageForInterval}
+                      strokeColor={{ "0%": "#108ee9", "100%": "#87d068" }}
+                      trailColor="#f5f5f5"
+                      strokeWidth={12}
+                      showInfo={true}
+                      format={(percent) => `${percent}%`}
+                    />
+                    <div className="text-center">
+                      <span className="text-gray-600">Davr bo'yicha dars bajarilish ko'rsatkichi</span>
+                    </div>
+                  </div>
+                </Card>
+              </Col>
+
+              <Col xs={24} lg={12}>
+                <Card
+                  title={
+                    <div className="flex items-center gap-2">
+                      <CalendarOutlined className="text-green-500" />
+                      <span className="font-semibold text-gray-800">Yillik o'quv yuklamasining bajarilish foizi</span>
+                    </div>
+                  }
+                  className="bg-white rounded-2xl shadow-lg border border-gray-100"
+                >
+                  <div className="space-y-4">
+                    <Progress
+                      percent={stats.finishedLessonLoadPercentageForCurrentYear}
+                      strokeColor={{ "0%": "#52c41a", "100%": "#73d13d" }}
+                      trailColor="#f5f5f5"
+                      strokeWidth={12}
+                      showInfo={true}
+                      format={(percent) => `${percent}%`}
+                    />
+                    <div className="text-center">
+                      <span className="text-gray-600">Joriy yil bo'yicha dars bajarilish ko'rsatkichi</span>
+                    </div>
+                  </div>
+                </Card>
+              </Col>
+            </Row>
+
+            {/* Monthly Late List */}
+            <Card
+              title={
+                <div className="flex items-center gap-2">
+                  <ClockCircleOutlined className="text-red-500" />
+                  <span className="font-semibold text-gray-800">Oylik Kechikish Statistikasi</span>
+                </div>
+              }
+              className="bg-white rounded-2xl shadow-lg border border-gray-100"
+            >
+              {stats.monthlyLateList.length > 0 ? (
+                <Table
+                  dataSource={stats.monthlyLateList}
+                  columns={columns}
+                  pagination={false}
+                  rowKey="month"
+                  className="rounded-lg"
+                  rowClassName="hover:bg-gray-50"
+                />
+              ) : (
+                <Empty
+                  description={
+                    <div className="text-center">
+                      <h3 className="text-lg font-medium text-gray-600 mb-2">Kechikish ma'lumotlari mavjud emas</h3>
+                      <p className="text-gray-500">Hozircha kechikish statistikasi topilmadi</p>
+                    </div>
+                  }
+                  image={Empty.PRESENTED_IMAGE_SIMPLE}
+                />
+              )}
+            </Card>
+
+            {/* Summary Card */}
+            <Card
+              title={
+                <div className="flex items-center gap-2">
+                  <BookOutlined className="text-purple-500" />
+                  <span className="font-semibold text-gray-800">Umumiy Xulosalar</span>
+                </div>
+              }
+              className="bg-white rounded-2xl shadow-lg border border-gray-100"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                    <span className="text-gray-700 font-medium">Yillik umumiy darslar soni</span>
+                    <span className="font-bold text-blue-600">{stats.lessonCountForCurrentYear}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                    <span className="text-gray-700 font-medium">Tugallangan darslar:</span>
+                    <span className="font-bold text-green-600">{stats.finishedLessonCount}</span>
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center p-3 bg-orange-50 rounded-lg">
+                    <span className="text-gray-700 font-medium">Davr darslari:</span>
+                    <span className="font-bold text-orange-600">{stats.lessonCountForInterval}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-red-50 rounded-lg">
+                    <span className="text-gray-700 font-medium">Bekor qilingan:</span>
+                    <span className="font-bold text-red-600">{stats.canceledLessonCount}</span>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          </>
+        )}
+      </div>
+    </ErrorBoundary>
   );
 };
 
