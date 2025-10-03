@@ -39,6 +39,13 @@ const Synchronization = loadable(() => import('./synchronize/pages'), {
   fallback: <Loading />
 });
 
+
+// ====================TUTOR PANEL ==================
+
+const TutorStatistics = loadable(() => import('./tutor-panel/statistics/pages'), {
+  fallback: <Loading />
+});
+
 const NotFound = loadable(() => import('./not-found'), {
   fallback: <Loading />
 });
@@ -57,6 +64,7 @@ export {
   FaceControl,
   GroupList,
   LessonStatistics,
+  TutorStatistics,
   Xazna,
   Synchronization,
   Abiturient,

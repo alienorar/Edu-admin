@@ -10,7 +10,7 @@ LessonStatistics,
 GroupList,
 Synchronization,
 Employee,
-FaceControl,
+TutorStatistics,
 } from "@modules"
 import { FiSlack } from "react-icons/fi"
 
@@ -53,14 +53,6 @@ export const routesConfig = [
         permissions: ["ADMIN_USER_MENU"],
         showInSidebar: true,
       },
-      {
-        path: "face-control",
-        icon: <FaUserShield style={{ fontSize: "22px" }} />,
-        label: "Face Control",
-        element: <FaceControl/>,
-        permissions: ["ADMIN_USER_MENU"],
-        showInSidebar: true,
-      },
     ],
   },
 
@@ -76,6 +68,14 @@ export const routesConfig = [
         label: "Darslar",
         icon: <FiSlack style={{ fontSize: "22px" }} />,
         element: <LessonStatistics/>,
+        permissions: ["SPECIALITY_FORM_STATISTICS_PAGEABLE"],
+        showInSidebar: true,
+      },
+      {
+        path: "tutor-statistics",
+        label: "Tutor statistikalari",
+        icon: <FiSlack style={{ fontSize: "22px" }} />,
+        element: <TutorStatistics/>,
         permissions: ["SPECIALITY_FORM_STATISTICS_PAGEABLE"],
         showInSidebar: true,
       },

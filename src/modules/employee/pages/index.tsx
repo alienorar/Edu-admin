@@ -270,7 +270,7 @@ const EmployeePage: React.FC = () => {
             type="primary"
             size="small"
             onClick={() => handleFaceConfigure(record)}
-            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 border-0 font-medium shadow-md hover:shadow-lg transition-all duration-200"
+            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 border-0 font-medium shadow-md hover:shadow-lg transition-all duration-200 text-white px-1"
           >
             <CameraOutlined className="mr-1" />
             Face Configure
@@ -312,7 +312,39 @@ const EmployeePage: React.FC = () => {
     { value: "DIVISION_HEAD", label: "Bo'linma mudiri" },
     { value: "RECTOR", label: "Rektor" },
     { value: "ACCOUNTANT", label: "Buxgalter" },
+    { value: "INTERNATIONAL_PRORECTOR", label: "Xalqaro prorektor" },
+    { value: "TUTOR", label: "Tutor" },
+    { value: "SENIOR_SPECIALIST", label: "Katta mutaxassis" },
+    { value: "SPECIALIST", label: "Mutaxassis" },
+    { value: "CABINET_MANAGER", label: "Kabinet menejeri" },
+    { value: "PRESS_SECRETARY", label: "Matbuot kotibi" },
+    { value: "SOFTWARE_ENGINEER", label: "Dasturiy injener" },
+    { value: "NETWORK_ADMIN", label: "Tarmoq administrator" },
+    { value: "FIRST_PRORECTOR", label: "Birinchi prorektor" },
+    { value: "ASSISTANT_RECTOR", label: "Rektor yordamchisi" },
+    { value: "CHIEF_ACCOUNTANT", label: "Bosh buxgalter" },
+    { value: "LEGAL_ADVISOR", label: "Huquqiy maslahatchi" },
+    { value: "MARKETER", label: "Marketingchi" },
+    { value: "ARCHIVIST", label: "Arxivchi" },
+    { value: "COUNCIL_SECRETARY", label: "Kengash kotibi" },
+    { value: "DORM_MANAGER", label: "Yotoqxona menejeri" },
+    { value: "CLEANER", label: "Tozalovchi" },
+    { value: "SECURITY_GUARD", label: "Qo'riqchi" },
+    { value: "TECHNICIAN", label: "Texnik" },
+    { value: "INSPECTOR", label: "Inspektor" },
+    { value: "MEDICAL_NURSE", label: "Shifokor yordamchisi" },
+    { value: "BIBLIOGRAPHER", label: "Bibliograf" },
+    { value: "WEB_DEVELOPER", label: "Veb-dasturchi" },
+    { value: "VIDEO_TECHNICIAN", label: "Video texnik" },
+    { value: "OPERATOR", label: "Operator" },
+    { value: "BROADCAST_DIRECTOR", label: "Efir direktori" },
+    { value: "ADVISOR_RECTOR", label: "Rektor maslahatchisi" },
+    { value: "RECORDS_MANAGER", label: "Hujjatlar menejeri" },
   ];
+
+
+
+
 
   return (
     <div className="space-y-6 p-6">
@@ -379,16 +411,16 @@ const EmployeePage: React.FC = () => {
         />
       </div>
 
-      {/* Face Configure Modal - Yaxshilangan Style */}
+      {/* Face Configure Modal */}
       <Modal
         title={
-          <div className="flex items-center gap-4 p-2 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
-              <CameraOutlined className="text-white text-lg" />
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+              <CameraOutlined className="text-blue-600 text-lg" />
             </div>
             <div>
-              <h3 className="text-xl font-bold text-gray-800">Face Configure</h3>
-              <p className="text-sm text-gray-600 font-medium">{selectedEmployee?.fullName}</p>
+              <h3 className="text-lg font-bold text-gray-800">Face Configure</h3>
+              <p className="text-sm text-gray-600">{selectedEmployee?.fullName}</p>
             </div>
           </div>
         }
@@ -399,7 +431,7 @@ const EmployeePage: React.FC = () => {
             key="cancel" 
             onClick={onCloseHandler}
             disabled={isLoading}
-            className="border-gray-300 hover:border-gray-400 rounded-lg px-6 py-2 font-medium transition-all duration-200"
+            className="border-gray-300 bg-red-500 text-white px-1 "
           >
             Bekor qilish
           </Button>,
@@ -409,7 +441,7 @@ const EmployeePage: React.FC = () => {
               onClick={() => setUploadedFile(null)}
               disabled={isLoading}
               icon={<ReloadOutlined />}
-              className="border-gray-300 hover:border-gray-400 rounded-lg px-6 py-2 font-medium transition-all duration-200 flex items-center gap-2"
+              className="border-gray-300"
             >
               Qayta yuklash
             </Button>
@@ -420,106 +452,96 @@ const EmployeePage: React.FC = () => {
             loading={isLoading}
             onClick={handleConfigureFace}
             disabled={!uploadedFile || isLoading}
-            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 border-0 rounded-lg px-6 py-2 font-semibold shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2"
+            className="bg-blue-600 hover:bg-blue-700 border-0 font-semibold shadow-md hover:shadow-lg transition-all duration-200 text-white px-1 mx-1"
             icon={<UploadOutlined />}
           >
             {isLoading ? "Amalga oshirilmoqda..." : "Face Configure"}
           </Button>,
         ]}
-        width={700}
+        width={600}
         closable={!isLoading}
         maskClosable={!isLoading}
         destroyOnClose
-        className="rounded-2xl"
-        style={{ borderRadius: '16px' }}
       >
-        <div className="space-y-6 py-6">
-          {/* Xodim ma'lumotlari - Yaxshilangan */}
-          <div className="bg-gradient-to-br from-indigo-50 to-blue-50 border border-indigo-200 rounded-2xl p-6 shadow-sm">
-            <h4 className="text-lg font-bold text-indigo-800 mb-4 flex items-center gap-3">
-              <UserOutlined className="text-indigo-600" />
+        <div className="space-y-6 py-4">
+          {/* Xodim ma'lumotlari */}
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+            <h4 className="font-semibold text-blue-800 mb-3 flex items-center gap-2">
+              <UserOutlined />
               Xodim ma'lumotlari
             </h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-              <div className="bg-white rounded-lg p-3 border border-gray-100">
-                <span className="text-gray-600 block">ID:</span>
-                <span className="font-semibold text-gray-800">#{selectedEmployee?.employeeId}</span>
+            <div className="grid grid-cols-2 gap-2 text-sm">
+              <div>
+                <span className="text-gray-600">ID:</span>
+                <span className="font-semibold ml-2">#{selectedEmployee?.employeeId}</span>
               </div>
-              <div className="bg-white rounded-lg p-3 border border-gray-100">
-                <span className="text-gray-600 block">To'liq ism:</span>
-                <span className="font-semibold text-gray-800">{selectedEmployee?.fullName}</span>
+              <div>
+                <span className="text-gray-600">To'liq ism:</span>
+                <span className="font-semibold ml-2">{selectedEmployee?.fullName}</span>
               </div>
-              <div className="bg-white rounded-lg p-3 border border-gray-100">
-                <span className="text-gray-600 block">Lavozim:</span>
-                <span className="font-semibold text-gray-800">{selectedEmployee?.staffPosition || "-"}</span>
+              <div>
+                <span className="text-gray-600">Lavozim:</span>
+                <span className="font-semibold ml-2">{selectedEmployee?.staffPosition || "-"}</span>
               </div>
-              <div className="bg-white rounded-lg p-3 border border-gray-100">
-                <span className="text-gray-600 block">Bo'lim:</span>
-                <span className="font-semibold text-gray-800">{selectedEmployee?.department || "-"}</span>
+              <div>
+                <span className="text-gray-600">Bo'lim:</span>
+                <span className="font-semibold ml-2">{selectedEmployee?.department || "-"}</span>
               </div>
             </div>
           </div>
 
-          {/* Rasm yuklash qismi - Yaxshilangan */}
-          <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-            <h4 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-3">
-              <UploadOutlined className="text-blue-600" />
+          {/* Rasm yuklash qismi */}
+          <div>
+            <h4 className="font-semibold text-gray-700 mb-3 flex items-center gap-2">
               Rasm yuklash
             </h4>
             <Upload {...uploadProps}>
               <Button 
                 icon={<UploadOutlined />} 
-                className="w-full h-24 border-2 border-dashed border-blue-300 hover:border-blue-400 bg-gradient-to-br from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 transition-all duration-300 rounded-2xl font-medium text-gray-700 shadow-inner hover:shadow-md"
+                className="w-full h-20 border-2 border-dashed border-gray-300 hover:border-blue-400 bg-gray-50 hover:bg-blue-50 transition-all duration-200 rounded-xl"
                 disabled={isLoading}
               >
-                <div className="text-center space-y-2">
-                  <div className="text-3xl">📁</div>
-                  <div className="font-medium">Rasmni yuklang yoki bu yerga tashlang</div>
-                  <div className="text-xs text-gray-500">JPG, PNG (5MB gacha)</div>
+                <div className="text-center flex justify-center items-center px-1">
+                  <div>Rasmni yuklang yoki bu yerga tashlang</div>
                 </div>
               </Button>
             </Upload>
-            <div className="mt-4 p-4 bg-gray-50 rounded-xl border border-gray-100">
-              <p className="text-sm text-gray-700 font-medium mb-2">Talablar:</p>
-              <ul className="text-xs text-gray-600 space-y-1">
-                <li className="flex items-center gap-2"><UploadOutlined className="text-xs text-blue-500" /> Qo'llab-quvvatlanadigan formatlar: JPG, PNG, JPEG</li>
-                <li className="flex items-center gap-2"><UploadOutlined className="text-xs text-blue-500" /> Maksimal hajm: 5MB</li>
-                <li className="flex items-center gap-2"><UploadOutlined className="text-xs text-blue-500" /> Yuz aniq ko'rinadigan rasm bo'lishi kerak</li>
+            <div className="mt-3 p-3 bg-gray-50 rounded-lg">
+              <p className="text-sm text-gray-600 font-medium">Talablar:</p>
+              <ul className="text-xs text-gray-500 mt-1 list-disc list-inside">
+                <li>Qo'llab-quvvatlanadigan formatlar: JPG, PNG, JPEG</li>
+                <li>Maksimal hajm: 5MB</li>
+                <li>Yuz aniq ko'rinadigan rasm bo'lishi kerak</li>
               </ul>
             </div>
           </div>
 
-          {/* Yuklangan fayl ko'rsatkich - Yaxshilangan */}
+          {/* Yuklangan fayl ko'rsatkich */}
           {uploadedFile && (
-            <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-2xl p-6 shadow-sm">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-emerald-500 rounded-xl flex items-center justify-center shadow-lg">
-                  <span className="text-white text-xl font-bold">✓</span>
+            <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                  <span className="text-green-600 text-lg">✓</span>
                 </div>
-                <div className="flex-1">
-                  <p className="text-green-800 font-bold text-lg">Rasm muvaffaqiyatli yuklandi!</p>
-                  <p className="text-green-700 font-medium">{uploadedFile.name}</p>
-                  <p className="text-green-600 text-sm mt-1">
-                    Hajmi: <span className="font-mono">{(uploadedFile.size / 1024 / 1024).toFixed(2)} MB</span>
+                <div>
+                  <p className="text-green-700 font-semibold">Rasm yuklandi!</p>
+                  <p className="text-green-600 text-sm">{uploadedFile.name}</p>
+                  <p className="text-green-500 text-xs">
+                    {(uploadedFile.size / 1024 / 1024).toFixed(2)} MB
                   </p>
                 </div>
-                <img 
-                  src={URL.createObjectURL(uploadedFile)} 
-                  alt="Uploaded" 
-                  className="w-16 h-16 object-cover rounded-lg border-2 border-green-200 shadow-md"
-                />
               </div>
             </div>
           )}
 
-          {/* Yuklash holati - Yaxshilangan */}
+          {/* Yuklash holati */}
           {isLoading && (
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-6 shadow-sm">
-              <div className="flex items-center gap-4">
-                <div className="animate-spin rounded-full h-8 w-8 border-2 border-blue-600 border-t-transparent"></div>
+            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+              <div className="flex items-center gap-3">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
                 <div>
-                  <p className="text-blue-800 font-bold text-lg">Amalga oshirilmoqda...</p>
-                  <p className="text-blue-700 text-sm font-medium mt-1">
+                  <p className="text-blue-700 font-semibold">Amalga oshirilmoqda...</p>
+                  <p className="text-blue-600 text-sm">
                     {uploadFileMutation.isPending && "Rasm yuklanmoqda..."}
                     {configureFaceMutation.isPending && "Face konfiguratsiya qilinmoqda..."}
                   </p>
