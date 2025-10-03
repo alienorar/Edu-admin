@@ -1,10 +1,10 @@
-import axiosInstance from "@api";
+import adminApi from "../../../api/admin";
 import { SignIn } from "../types";
 
 
 // ==============Sign In ============
 export async function signIn(data:SignIn) {
-    return await axiosInstance.post("/api/v1/admin/sign/in",data)
+    return await adminApi.post("/api/v1/admin/sign/in",data)
 }
 
 

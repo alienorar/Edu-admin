@@ -1,4 +1,4 @@
-import axiosInstance from "@api";
+import axiosInstance from "../../../api/admin";
 import { ParamsType } from "@types";
 
 // ============= GET STUDENTS ============

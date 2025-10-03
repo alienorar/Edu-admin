@@ -2,9 +2,10 @@
 import { useGetSyncSchedule, useGetSyncDepartment, useGetSyncEmployee } from "../hooks/queries";
 import { useState } from "react";
 import { Card, Button, Input, Typography, Space } from "antd";
-
-import { RefreshCw, Building, Users } from "lucide-react";
 import { openNotification } from "@utils";
+import { FiRefreshCcw } from "react-icons/fi";
+import { FaBuilding } from "react-icons/fa";
+import { UserSwitchOutlined } from "@ant-design/icons";
 
 const { Title, Text } = Typography;
 
@@ -71,7 +72,7 @@ const Index = () => {
       <Card
         title={
           <Space>
-            <RefreshCw size={20} className="text-violet-500" />
+            <FiRefreshCcw size={20} className="text-violet-500" />
             <Title level={4} style={{ margin: 0, color: "#1f2937" }}>
               Schedule Yangilash
             </Title>
@@ -132,7 +133,7 @@ const Index = () => {
         <Card
           title={
             <Space>
-              <Building size={20} className="text-violet-500" />
+              <FaBuilding size={20} className="text-violet-500" />
               <Title level={4} style={{ margin: 0, color: "#1f2937" }}>
                 Department Yangilash
               </Title>
@@ -175,7 +176,7 @@ const Index = () => {
         <Card
           title={
             <Space>
-              <Users size={20} className="text-violet-500" />
+              <UserSwitchOutlined size={20} className="text-violet-500" />
               <Title level={4} style={{ margin: 0, color: "#1f2937" }}>
                 Employee Yangilash
               </Title>

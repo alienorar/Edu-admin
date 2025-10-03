@@ -1,4 +1,4 @@
-import axiosInstance from "@api";
+import axiosInstance from "../../../api/admin";
 import { AdminsResponse, AdminType, ParamsType} from "@types";
 
 //================ GET ADMINS ===============

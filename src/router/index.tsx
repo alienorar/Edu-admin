@@ -5,7 +5,7 @@ import type React from "react"
 import { useState, useEffect } from "react"
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider, Navigate } from "react-router-dom"
 import App from "../App"
-import { SignIn, AdminPanel, NotFound, AccessDenied } from "@modules"
+import { SignIn, AdminPanel, NotFound, AccessDenied, General, Tutor } from "@modules"
 import { getUserPermissions, getAccessToken } from "../utils/token-service"
 import { routesConfig } from "./routes"
 
@@ -91,7 +91,23 @@ const Index = () => {
           path="/"
           element={
             <AuthenticatedRedirect>
+              <General/>
+            </AuthenticatedRedirect>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <AuthenticatedRedirect>
               <SignIn />
+            </AuthenticatedRedirect>
+          }
+        />
+        <Route
+          path="/tutor"
+          element={
+            <AuthenticatedRedirect>
+              <Tutor />
             </AuthenticatedRedirect>
           }
         />

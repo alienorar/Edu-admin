@@ -3,6 +3,8 @@ import { ColumnsType, TablePaginationConfig, TableProps } from "antd/es/table";
 
 // ========== PARAMS TYPE ==========
 export interface ParamsType {
+  staffPosition?:string;
+  face?: boolean;
   studentId?: number | string;
   passport?: string;
   size?: number | string | undefined,

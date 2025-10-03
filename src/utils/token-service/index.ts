@@ -65,3 +65,6 @@ export const clearPermissions = () => {
   localStorage.removeItem("permissions")
   window.dispatchEvent(new CustomEvent("permissionsUpdated"))
 }
+
+
+

@@ -9,6 +9,8 @@ import {
 LessonStatistics,
 GroupList,
 Synchronization,
+Employee,
+FaceControl,
 } from "@modules"
 import { FiSlack } from "react-icons/fi"
 
@@ -40,6 +42,22 @@ export const routesConfig = [
         icon: <FaUserShield style={{ fontSize: "22px" }} />,
         label: "Property",
         element: <GroupList/>,
+        permissions: ["ADMIN_USER_MENU"],
+        showInSidebar: true,
+      },
+      {
+        path: "employee",
+        icon: <FaUserShield style={{ fontSize: "22px" }} />,
+        label: "Employee",
+        element: <Employee/>,
+        permissions: ["ADMIN_USER_MENU"],
+        showInSidebar: true,
+      },
+      {
+        path: "face-control",
+        icon: <FaUserShield style={{ fontSize: "22px" }} />,
+        label: "Face Control",
+        element: <FaceControl/>,
         permissions: ["ADMIN_USER_MENU"],
         showInSidebar: true,
       },
