@@ -11,6 +11,7 @@ GroupList,
 Synchronization,
 Employee,
 TutorStatistics,
+TutorProtocol,
 } from "@modules"
 import { FiSlack } from "react-icons/fi"
 
@@ -87,6 +88,14 @@ export const routesConfig = [
         label: "Sinxronizatsiya",
         icon: <FiSlack style={{ fontSize: "22px" }} />,
         element: <Synchronization/>,
+        permissions: ["SPECIALITY_FORM_STATISTICS_PAGEABLE"],
+        showInSidebar: true,
+      },
+     {
+        path: "protocol",
+        label: "Protokol",
+        icon: <FiSlack style={{ fontSize: "22px" }} />,
+        element: <TutorProtocol/>,
         permissions: ["SPECIALITY_FORM_STATISTICS_PAGEABLE"],
         showInSidebar: true,
       },

@@ -21,7 +21,7 @@ const Callback = () => {
         setAccessToken(token);
         console.log("Access token set in auth service");
         // Teacher-panel ga yo‘naltirish
-        navigate("/teacher-panel/statistics", { replace: true });
+        navigate("/super-admin-panel/tutor-statistics", { replace: true });
         openNotification("success", "Success", "Successfully authenticated!");
       } catch (error) {
         console.error("Error setting access token:", error);

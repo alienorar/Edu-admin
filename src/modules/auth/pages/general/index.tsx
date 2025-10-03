@@ -43,9 +43,9 @@ const Index: React.FC = () => {
 
       <div className="w-full max-w-md relative z-10">
         {/* Logo/Header Section */}
-        <div className="text-center mb-10">
-          <h1 className="text-3xl font-bold text-gray-700 mb-3">Xush kelibsiz</h1>
-          <p className="text-gray-800 text-lg">Tizimga kirish usulini tanlang</p>
+        <div className="text-center flex items-center justify-center flex-col ">
+          <h1 className="text-3xl font-bold text-white mb-3">Xush kelibsiz</h1>
+          <p className="text-white text-lg">Tizimga kirish usulini tanlang</p>
         </div>
 
         {/* Button Card */}
@@ -73,10 +73,8 @@ const Index: React.FC = () => {
           </div>
         </Card>
 
-        {/* Footer */}
-        <div className="text-center mt-8">
-          <p className="text-gray-500 text-sm">© 2024 Admin Panel. Barcha huquqlar himoyalangan.</p>
-        </div>
+      
+      
       </div>
     </div>
   );

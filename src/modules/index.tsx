@@ -46,6 +46,10 @@ const TutorStatistics = loadable(() => import('./tutor-panel/statistics/pages'),
   fallback: <Loading />
 });
 
+const TutorProtocol = loadable(() => import('./tutor-panel/protocol/pages'), {
+  fallback: <Loading />
+});
+
 const NotFound = loadable(() => import('./not-found'), {
   fallback: <Loading />
 });
@@ -65,6 +69,7 @@ export {
   GroupList,
   LessonStatistics,
   TutorStatistics,
+  TutorProtocol,
   Xazna,
   Synchronization,
   Abiturient,
