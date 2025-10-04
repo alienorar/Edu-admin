@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useNavigate, useSearchParams, } from "react-router-dom";
+import {  useSearchParams, } from "react-router-dom";
 // import { setTeacherToken } from "../../../../utils/token-service";
 import { openNotification } from "@utils";
 import { setAccessToken } from "../../../../utils/token-service";
@@ -9,7 +9,7 @@ import { setAccessToken } from "../../../../utils/token-service";
 
 const Callback = () => {
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   useEffect(() => {
     const token = searchParams.get("token");
@@ -21,7 +21,7 @@ const Callback = () => {
         setAccessToken(token);
         console.log("Access token set in auth service");
         // Teacher-panel ga yo‘naltirish
-        navigate("/super-admin-panel/tutor-statistics", { replace: true });
+        // navigate("/super-admin-panel/tutor-statistics", { replace: true });
         openNotification("success", "Success", "Successfully authenticated!");
       } catch (error) {
         console.error("Error setting access token:", error);

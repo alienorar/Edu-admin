@@ -16,6 +16,11 @@ export async function configureFace(data:ConfigureFacePayload) {
     return await adminApi.post("api/v1/admin/employee/face/configure", data)
 }
 
+// ============ CREATE ROLE ===========
+export async function getStaffPosition() {
+    return await adminApi.get("api/v1/admin/employee/staff/positions")
+}
+
 
 // ============ UPLOAD FILE ===========
 export async function uploadFile(file: Blob): Promise<{

@@ -9,7 +9,7 @@ const teacherApi = axios.create({
 teacherApi.interceptors.request.use((config) => {
   const token = getAccessToken()
   if (token) {
-    config.headers["x-teacher-token"] = token
+    config.headers["X-Admin-Token"] = token
   }
   return config
 })
@@ -27,7 +27,7 @@ teacherApi.interceptors.response.use(
         const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/auth/refresh`, { refreshToken: refresh })
         const newToken = response.data.accessToken
         setAccessToken(newToken)
-        originalRequest.headers["x-teacher-token"] = newToken
+        originalRequest.headers["X-Admin-Token"] = newToken
         return teacherApi(originalRequest)
       } catch (err) {
         logout()

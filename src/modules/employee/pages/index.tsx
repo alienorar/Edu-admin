@@ -1,8 +1,8 @@
 "use client";
 
-import { useGetEmployeeList,} from "../hooks/queries";
+import { useGetEmployeeList, useGetStaffPosition,} from "../hooks/queries";
 import { useEffect, useMemo, useState } from "react";
-import { Button, Switch, Table, Tag, type TablePaginationConfig, Select, Modal, Upload, message } from "antd";
+import { Button, Switch, Table, Tag, type TablePaginationConfig, Select, Modal, Upload, message, Input } from "antd";
 import { SearchOutlined, UserOutlined, UploadOutlined, CameraOutlined, ReloadOutlined } from "@ant-design/icons";
 import { useSearchParams } from "react-router-dom";
 import { useConfigureFace, useUploadFile } from "../hooks/mutations";
@@ -51,13 +51,27 @@ const EmployeePage: React.FC = () => {
   const size = Number(searchParams.get("size") ?? 10);
   const face = searchParams.get("face") === "true";
   const staffPosition = searchParams.get("staffPosition") ?? "";
+  const fullName = searchParams.get("fullName") ?? "";
 
   const { data: employeeList, isFetching, error } = useGetEmployeeList({
     page: page - 1,
     size,
     face: face || undefined,
     staffPosition: staffPosition || undefined,
+    fullName: fullName || undefined,
   });
+
+
+  const {data: staffPositions} = useGetStaffPosition();
+console.log("staffPositions:", staffPositions?.data?.data);
+
+  const staffPositionOptions = useMemo(() => {
+    return (staffPositions?.data?.data || []).map((item: { code: string; label: string }) => ({
+      value: item.code,
+      label: item.label,
+    }));
+  }, [staffPositions]);
+
 
   const [tableData, setTableData] = useState<Employee[]>([]);
   const [total, setTotal] = useState<number>(0);
@@ -301,47 +315,6 @@ const EmployeePage: React.FC = () => {
     [],
   );
 
-  const staffPositionOptions = [
-    { value: "", label: "Barchasi" },
-    { value: "INTERN_TEACHER", label: "Intern o'qituvchi" },
-    { value: "ASSISTANT", label: "Assistent" },
-    { value: "SENIOR_TEACHER", label: "Katta o'qituvchi" },
-    { value: "DOCENT", label: "Dotsent" },
-    { value: "PROFESSOR", label: "Professor" },
-    { value: "DEPARTMENT_HEAD", label: "Bo'lim mudiri" },
-    { value: "DIVISION_HEAD", label: "Bo'linma mudiri" },
-    { value: "RECTOR", label: "Rektor" },
-    { value: "ACCOUNTANT", label: "Buxgalter" },
-    { value: "INTERNATIONAL_PRORECTOR", label: "Xalqaro prorektor" },
-    { value: "TUTOR", label: "Tutor" },
-    { value: "SENIOR_SPECIALIST", label: "Katta mutaxassis" },
-    { value: "SPECIALIST", label: "Mutaxassis" },
-    { value: "CABINET_MANAGER", label: "Kabinet menejeri" },
-    { value: "PRESS_SECRETARY", label: "Matbuot kotibi" },
-    { value: "SOFTWARE_ENGINEER", label: "Dasturiy injener" },
-    { value: "NETWORK_ADMIN", label: "Tarmoq administrator" },
-    { value: "FIRST_PRORECTOR", label: "Birinchi prorektor" },
-    { value: "ASSISTANT_RECTOR", label: "Rektor yordamchisi" },
-    { value: "CHIEF_ACCOUNTANT", label: "Bosh buxgalter" },
-    { value: "LEGAL_ADVISOR", label: "Huquqiy maslahatchi" },
-    { value: "MARKETER", label: "Marketingchi" },
-    { value: "ARCHIVIST", label: "Arxivchi" },
-    { value: "COUNCIL_SECRETARY", label: "Kengash kotibi" },
-    { value: "DORM_MANAGER", label: "Yotoqxona menejeri" },
-    { value: "CLEANER", label: "Tozalovchi" },
-    { value: "SECURITY_GUARD", label: "Qo'riqchi" },
-    { value: "TECHNICIAN", label: "Texnik" },
-    { value: "INSPECTOR", label: "Inspektor" },
-    { value: "MEDICAL_NURSE", label: "Shifokor yordamchisi" },
-    { value: "BIBLIOGRAPHER", label: "Bibliograf" },
-    { value: "WEB_DEVELOPER", label: "Veb-dasturchi" },
-    { value: "VIDEO_TECHNICIAN", label: "Video texnik" },
-    { value: "OPERATOR", label: "Operator" },
-    { value: "BROADCAST_DIRECTOR", label: "Efir direktori" },
-    { value: "ADVISOR_RECTOR", label: "Rektor maslahatchisi" },
-    { value: "RECORDS_MANAGER", label: "Hujjatlar menejeri" },
-  ];
-
 
 
 
@@ -362,25 +335,34 @@ const EmployeePage: React.FC = () => {
 
         {/* Filters */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Input
+            placeholder="Xodimni qidirish..."
+            value={fullName}
+            onChange={(e) => updateParams({ fullName: e.target.value || undefined, page: "1" })}
+            prefix={<SearchOutlined />}
+            allowClear
+            className="h-11"
+          />
           <Select
             allowClear
             placeholder="Lavozim tanlang"
             options={staffPositionOptions}
             value={staffPosition || undefined}
-            onChange={(v) => updateParams({ staffPosition: v || undefined })}
+            onChange={(v) => updateParams({ staffPosition: v || undefined, page: "1" })}
             className="h-11"
+            loading={!staffPositions}
           />
           <div className="flex items-center gap-2 h-11">
             <span className="text-gray-700 font-semibold">Face:</span>
             <Switch
               checked={face}
-              onChange={(checked) => updateParams({ face: checked.toString() })}
+              onChange={(checked) => updateParams({ face: checked.toString(), page: "1" })}
               className="bg-gray-200"
             />
           </div>
           <Button
             type="primary"
-            onClick={() => updateParams({ staffPosition: "", face: undefined })}
+            onClick={() => updateParams({ staffPosition: "", face: undefined, fullName: "" })}
             className="h-11 bg-gradient-to-r from-teal-500 to-blue-600 hover:from-teal-600 hover:to-blue-700 border-0 rounded-xl font-semibold shadow-lg hover:shadow-lg transition-all duration-200"
             icon={<SearchOutlined />}
           >

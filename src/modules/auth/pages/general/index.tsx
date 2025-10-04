@@ -23,7 +23,7 @@ const Index: React.FC = () => {
       });
       const data = await response.json();
       if (data.success && data.data.redirectUrl) {
-        window.location.href = data.data.redirectUrl; // Redirect to the OAuth URL
+        window.location.href = data.data.redirectUrl; 
       } else {
         console.error("Tutor login failed:", data.errorMessage || "No redirect URL");
       }
